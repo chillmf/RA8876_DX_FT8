@@ -162,7 +162,7 @@ void display_revision_level(void)
   tft.write("RA8876_DX FT8", 13);
 
   tft.setCursor(0, 130);
-  tft.write("Hardware: V1.0", 14);
+  tft.write("Hardware: V3.0", 14);
 
   tft.setCursor(0, 160);
   tft.write("Firmware: V1.0", 14);
@@ -179,9 +179,11 @@ void display_revision_level(void)
 
   tft.textColor(GREEN, BLACK);
   tft.setCursor(0, 270);
-  tft.write("Please Wait While Gears", 23);
+  tft.write("Please Wait While", 17);
   tft.setCursor(0, 300);
-  tft.write("& Pulleys Are Aligned", 21);
+  tft.write("Gears & Pulleys", 15);
+  tft.setCursor(0, 330);
+  tft.write(" Are Aligned", 12);
 }
 
 void show_degrees(uint16_t x, uint16_t y, int32_t variable)

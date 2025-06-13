@@ -175,6 +175,7 @@ void update_offset_waterfall(int offset)
     }
   }
 
+  /*
   const size_t rowLength = 2 * (ft8_buffer - ft8_min_bin);
   // two pixels for each datum point
   uint16_t rowBuffer[rowLength * 2] = {0};
@@ -209,6 +210,23 @@ void update_offset_waterfall(int offset)
   }
 
   tft.writeRect(0, WF_counter, rowLength, 1, rowBuffer);
+  */
+
+for (int k = ft8_min_bin; k< ft8_buffer; k++) {
+        
+      if(xmit_flag == 0 )
+      tft.drawPixel(2*(k-ft8_min_bin), WF_counter, WFPalette[WF_index[k]]);  
+      else {
+      if( 2*(k-ft8_min_bin) >= display_cursor_line && 2*(k-ft8_min_bin) <= display_cursor_line + 16) tft.drawPixel(2*(k-ft8_min_bin), WF_counter, WFPalette[WF_index[k]]);
+      else
+      tft.drawPixel(2*(k-ft8_min_bin), WF_counter, BLACK);   
+      }
+    
+       tft.drawPixel(display_cursor_line, WF_counter,RED);
+      
+      }
+
+
 
   WF_counter++;
 }
