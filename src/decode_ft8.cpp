@@ -385,15 +385,14 @@ int Check_Calling_Stations(int num_decoded)
         strcpy(Target_Call, new_decoded[i].field2);
 
         if (Beacon_On == 1)
-          Target_RSL = new_decoded[i].snr;
-
-        strcpy(Target_Locator, new_decoded[i].target_locator);
+          {Target_RSL = new_decoded[i].snr;
+          strcpy(Target_Locator, new_decoded[i].target_locator);
+          }
 
         if (new_decoded[i].received_snr != 99)
           Station_RSL = new_decoded[i].received_snr;
 
         if (Beacon_On == 1) // migraion
-
         {
           if (new_decoded[i].sequence == Seq_Locator)
             set_reply(Reply_RSL);
@@ -423,9 +422,11 @@ int Check_Calling_Stations(int num_decoded)
         if (new_decoded[i].RR73 == 1)
           RR73_sent = 1;
 
+       
         strcpy(Target_Call, Answer_CQ[old_call_address].call);
-        strcpy(Target_Locator, Answer_CQ[old_call_address].locator);
+       // strcpy(Target_Locator, Answer_CQ[old_call_address].locator);
         Target_RSL = Answer_CQ[old_call_address].RSL;
+        
 
         if (new_decoded[i].received_snr != 99)
           Answer_CQ[old_call_address].received_RSL = new_decoded[i].received_snr;
@@ -437,6 +438,7 @@ int Check_Calling_Stations(int num_decoded)
           if (Beacon_On == 1)
           {
             // if (new_decoded[i].RR73 == 1)  //chh_ft8_traffic
+            strcpy(Target_Locator, Answer_CQ[old_call_address].locator);
             if (new_decoded[i].RR73 > 0)
             {
               if (Answer_CQ[old_call_address].sequence == Seq_Locator)
