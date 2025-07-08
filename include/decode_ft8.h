@@ -8,6 +8,8 @@
 #ifndef DECODE_FT8_H_
 #define DECODE_FT8_H_
 
+#define MAX_MSG_LEN 40
+
 int ft8_decode(void);
 
 typedef enum _Sequence
