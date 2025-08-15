@@ -145,6 +145,8 @@ void tx_display_update(void)
 	if (Tune_On || worked_qsos_in_display) {
 		return;
 	}
+
+  
 	if (xmit_flag) {
 		display_txing_message(autoseq_txbuf);
 	} else {
@@ -153,6 +155,7 @@ void tx_display_update(void)
 
 	autoseq_get_qso_state(autoseq_state_str);
 	display_qso_state(autoseq_state_str);
+  
 
 }
 
