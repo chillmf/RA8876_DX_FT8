@@ -18,6 +18,7 @@
 File stationData_File;
 
 static const int max_log_messages = 9;
+
 extern int log_display_flag;
 display_message_details log_messages[max_log_messages];
 char current_message[22];
@@ -353,6 +354,8 @@ void update_message_log_display(int mode)
 
 void display_logged_messages(void)
 {
+
+  /*
   tft.fillRect(START_X_RIGHT, 140, 260, 400, BLACK);
   tft.setFontSize(2, true);
 
@@ -366,4 +369,17 @@ void display_logged_messages(void)
     tft.setCursor(START_X_RIGHT, 180 + i * 40);
     tft.write(log_messages[i].message, 18);
   }
+
+*/
+
+  clear_qso_region();
+
+    for (int i = 0; i < max_log_messages; i++)
+  {
+    if (log_messages[i].text_color)
+    display_line(true, i+2, Black, Yellow, log_messages[i].message);
+    else
+    display_line(true, i+2, Black, Red, log_messages[i].message);
+  }
+
 }

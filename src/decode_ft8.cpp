@@ -219,7 +219,7 @@ void process_selected_Station(int stations_decoded, int TouchIndex)
     strcpy(Target_Locator, new_decoded[TouchIndex].target_locator);
 
     Target_RSL = new_decoded[TouchIndex].snr;
-    target_slot = new_decoded[TouchIndex].slot;
+    target_slot = new_decoded[TouchIndex].slot ^ 1;
     int target_freq = new_decoded[TouchIndex].freq_hz;
 
     if (QSO_Fix)
@@ -278,7 +278,7 @@ void clear_rx_region(void)
 void clear_qso_region(void)
 {
     for (int i = 0; i < MAX_QSO_ROWS; i++) {
-        display_line(true, i, Black, Black, blank);
+        display_line(true, i+1, Black, Black, blank);
     }
 }
 

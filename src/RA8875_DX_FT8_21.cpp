@@ -369,12 +369,14 @@ void loop()
     clr_pressed = false;
   }
 
+  /*
   if (tx_pressed)
   {
     worked_qsos_in_display = display_worked_qsos();
     tx_pressed = false;
     tx_display_update();
   }
+    */
 
   if (!Tune_On && log_display_flag == 1)
   {
