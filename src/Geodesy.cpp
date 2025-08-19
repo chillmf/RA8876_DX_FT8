@@ -101,7 +101,7 @@ double RadioHorizon(double height)
 // Validate characters for field (A-R), square (0-9), subsquare (a-x)
 bool IsValidLocator(const char *locator)
 {
-    /*
+    
     if (!locator)
     {
         return false;
@@ -134,29 +134,6 @@ bool IsValidLocator(const char *locator)
 
     return 1;
 
-    */
-
-    uint8_t A1, A2, N1, N2;
-    uint8_t test = 0;
-
-    A1 = locator[0] - 65;
-    A2 = locator[1] - 65;
-    N1 = locator[2] - 48;
-    N2 = locator[3] - 48;
-
-        if (A1 <= 17) // 'R'
-            test++;
-        if (A2 > 0 && A2 < 17)
-            test++; // block RR73 Arctic and Antarctica
-        if (N1 <= 9)
-            test++;
-        if (N2 <= 9)
-            test++;
-
-        if (test == 4)
-            return true;
-        else
-            return false;
 
 }
 

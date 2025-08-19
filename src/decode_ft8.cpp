@@ -147,7 +147,7 @@ int ft8_decode(void)
 
         new_decoded[num_decoded].sequence = Seq_RSL;
 
-        if (IsValidLocator(locator))
+         if (validate_locator(locator) == 1)
         {
           strcpy(new_decoded[num_decoded].target_locator, locator);
           new_decoded[num_decoded].sequence = Seq_Locator;
@@ -183,7 +183,30 @@ int ft8_decode(void)
   return num_decoded;
 }
 
+int validate_locator(const char *QSO_locator)
+{
+  uint8_t A1, A2, N1, N2;
+  uint8_t test = 0;
 
+  A1 = QSO_locator[0] - 65;
+  A2 = QSO_locator[1] - 65;
+  N1 = QSO_locator[2] - 48;
+  N2 = QSO_locator[3] - 48;
+
+	if (A1 <= 17) // 'R'
+		test++;
+	if (A2 > 0 && A2 < 17)
+		test++; // block RR73 Arctic and Antarctica
+	if (N1 <= 9)
+		test++;
+	if (N2 <= 9)
+		test++;
+
+	if (test == 4)
+		return 1;
+	else
+		return 0;
+}
 
 int strindex(const char *s, const char *t)
 {

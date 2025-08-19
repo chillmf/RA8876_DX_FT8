@@ -84,7 +84,7 @@ void display_txing_message(const char*msg);
 void display_qso_state(const char *txt);
 char *add_worked_qso(void);
 bool display_worked_qsos(void);
-
+int validate_locator(const char *QSO_locator);
 int strindex(const char *s, const char *t);
 
 extern int Auto_QSO_State;
