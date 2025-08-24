@@ -71,7 +71,6 @@ const uint32_t lcd_color_map[LastColor] = {
 
 
 
-int Check_Calling_Stations(int num_decoded);
 
 void process_selected_Station(int stations_decoded, int TouchIndex);
 
@@ -87,7 +86,6 @@ bool display_worked_qsos(void);
 
 int strindex(const char *s, const char *t);
 
-extern int Auto_QSO_State;
 extern struct Decode new_decoded[];
 extern size_t kMax_message_length;
 extern int was_txing;

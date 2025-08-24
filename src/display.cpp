@@ -353,17 +353,13 @@ void update_message_log_display(int mode)
 
 void display_logged_messages(void)
 {
-  tft.fillRect(START_X_RIGHT, 140, 260, 400, BLACK);
-  tft.setFontSize(2, true);
+  clear_qso_region();
 
   for (int i = 0; i < max_log_messages; i++)
   {
     if (log_messages[i].text_color)
-      tft.textColor(YELLOW, BLACK);
+      display_line(true, i + 2, Black, Yellow, log_messages[i].message);
     else
-      tft.textColor(RED, BLACK);
-
-    tft.setCursor(START_X_RIGHT, 180 + i * 40);
-    tft.write(log_messages[i].message, 18);
+      display_line(true, i + 2, Black, Red, log_messages[i].message);
   }
 }

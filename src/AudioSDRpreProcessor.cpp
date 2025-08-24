@@ -68,21 +68,26 @@ void AudioSDRpreProcessor::update(void)
   //     simply delay the samples in I2S input channel 0 (blockI) by a single sample so that
   //     the channels are synchronized again.
   // ---
-  if (I2Scorrection == 1)
+
+  switch (I2Scorrection)
+  {
+  case 1:
   {
     int16_t temp = blockI->data[n_block - 1]; // save the most recent sample for the next buffer
-    for (int i = n_block - 1; i > 0; i--)
-      blockI->data[i] = blockI->data[i - 1];
+    memmove(blockI->data + 1, blockI->data, (n_block - 1) * sizeof(q15_t));
     blockI->data[0] = savedSample;
     savedSample = temp;
+    break;
   }
-  else if (I2Scorrection == -1)
+
+  case -1:
   {
     int16_t temp = blockQ->data[n_block - 1]; // save the most recent sample for the next buffer
-    for (int i = n_block - 1; i > 0; i--)
-      blockQ->data[i] = blockQ->data[i - 1];
-    blockI->data[0] = savedSample;
+    memmove(blockQ->data + 1, blockQ->data, (n_block - 1) * sizeof(q15_t));
+    blockQ->data[0] = savedSample;
     savedSample = temp;
+    break;
+  }
   }
 
   //
@@ -160,9 +165,7 @@ void AudioSDRpreProcessor::update(void)
   {
     for (int i = 0; i < 128; i++)
     {
-      int temp = blockI->data[i];
-      blockI->data[i] = blockQ->data[i];
-      blockQ->data[i] = temp;
+      std::swap(blockI->data[i], blockQ->data[i]);
     }
   }
 
@@ -180,7 +183,6 @@ void AudioSDRpreProcessor::startAutoI2SerrorDetection(void)
   I2Scorrection = 0;
   failureCount = 0;
   successCount = 0;
-  // autoDetectFlag = false;
 }
 
 // ---

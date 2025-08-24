@@ -85,11 +85,11 @@ void autoseq_init(const char *myCall, const char *myGrid)
     ctx.state = AS_IDLE;
 }
 
+static const char CQ[3] = "CQ";
+
 void autoseq_start_cq(void)
 {
-    ctx.dxcall[0] = 'C';
-    ctx.dxcall[1] = 'Q';
-    ctx.dxcall[2] = '\0';
+    memcpy(ctx.dxcall, CQ, sizeof(CQ));
     set_state(AS_CALLING, TX6, 0); /* infinite CQ loop */
 }
 
@@ -98,6 +98,7 @@ void autoseq_on_touch(const Decode *msg)
 {
     if (!msg)
         return;
+    
     parse_rcvd_msg(msg);
     if (strncmp(msg->call_to, ctx.mycall, 14) != 0)
     {
@@ -110,6 +111,7 @@ void autoseq_on_touch(const Decode *msg)
         generate_response(msg, true);
         return;
     }
+
     // Must be handling TX6
     strncpy(ctx.dxcall, msg->call_from, sizeof(ctx.dxcall) - 1);
     strncpy(ctx.dxgrid, msg->locator, sizeof(ctx.dxgrid) - 1);
@@ -124,6 +126,7 @@ bool autoseq_on_decode(const Decode *msg)
 {
     if (!msg)
         return false;
+
     // Not addresses me, return false
     if (strncmp(msg->call_to, ctx.mycall, 14) != 0)
     {
@@ -160,7 +163,6 @@ bool autoseq_get_next_tx(char out_text[MAX_MSG_LEN])
             ctx.state = AS_SIGNOFF; /* give up */
         }
     }
-
     return true;
 }
 
@@ -193,14 +195,6 @@ void autoseq_get_qso_state(char out_text[MAX_LINE_LEN])
              " %.4s tried:%1u",
              states[ctx.state],
              ctx.retry_counter
-
-             /*
-             "%-8.8s %.4s tried:%1u",
-             ctx.dxcall,
-             states[ctx.state],
-             ctx.retry_counter
-             */
-
     );
 }
 
@@ -221,6 +215,7 @@ void autoseq_tick(void)
             ctx.next_tx = TX5;
         }
         break;
+
     case AS_REPORT:
         if (ctx.retry_counter < ctx.retry_limit)
         {
@@ -233,6 +228,7 @@ void autoseq_tick(void)
             ctx.next_tx = TX5;
         }
         break;
+
     case AS_ROGER_REPORT:
         if (ctx.retry_counter < ctx.retry_limit)
         {
@@ -245,6 +241,7 @@ void autoseq_tick(void)
             ctx.next_tx = TX5;
         }
         break;
+
     case AS_ROGERS:
         if (ctx.retry_counter < ctx.retry_limit)
         {
@@ -258,7 +255,8 @@ void autoseq_tick(void)
             ctx.logged = false;
         }
         break;
-    case AS_CALLING: // CQ iscontrolled by Beacon_On, so it's only once
+
+    case AS_CALLING: // CQ is controlled by Beacon_On, so it's only once
     case AS_SIGNOFF:
         ctx.state = AS_IDLE;
         ctx.next_tx = TX_UNDEF;
@@ -291,7 +289,7 @@ static void format_tx_text(tx_msg_t id, char out[MAX_MSG_LEN])
 
     out[0] = '\0';
 
-    const char *cq_str = "CQ";
+    const char *cq_str;
 
     switch (id)
     {
@@ -339,6 +337,7 @@ static void format_tx_text(tx_msg_t id, char out[MAX_MSG_LEN])
                 cq_str = "CQ QRP";
                 break;
             default:
+                cq_str = CQ;
                 break;
             }
             snprintf(out, MAX_MSG_LEN, "%s %s %s", cq_str, ctx.mycall, ctx.mygrid);
@@ -433,12 +432,7 @@ static bool generate_response(const Decode *msg, bool override)
             break;
         }
     }
-    // char rcvd_msg_type_str[15]; // "ST: , Rcvd TXx\n"
-    // snprintf(rcvd_msg_type_str, sizeof(rcvd_msg_type_str), "ST:%u, Rcvd TX%u", ctx.state, rcvd_msg_type);
-    // _debug(rcvd_msg_type_str);
-
     // Populating Target_Call
-    // strncpy(Target_Call, msg->call_from, sizeof(Target_Call) - 1);
     strncpy(Target_Call, msg->call_from, 7);
 
     // Populating Station_RSL
@@ -461,7 +455,6 @@ static bool generate_response(const Decode *msg, bool override)
         {
         case TX1:
             // Populate Target_Locator
-            // strncpy(Target_Locator, msg->locator, sizeof(Target_Locator) - 1);
             strncpy(Target_Locator, msg->locator, 5);
             set_state(AS_REPORT, TX2, MAX_TX_RETRY);
             return true;
@@ -480,9 +473,6 @@ static bool generate_response(const Decode *msg, bool override)
         switch (ctx.rcvd_msg_type)
         {
         // Since we sent TX1, it doesn't make sense to respond to TX1
-        // case TX1:
-        //     set_state(AS_REPORT, TX2, MAX_TX_RETRY);
-        //     return true;
         case TX2:
             set_state(AS_ROGER_REPORT, TX3, MAX_TX_RETRY);
             return true;
@@ -503,16 +493,6 @@ static bool generate_response(const Decode *msg, bool override)
     case AS_REPORT:
         switch (ctx.rcvd_msg_type)
         {
-            // DX didn't copy our TX2 response, stay in the same state by returning false
-            // case TX1:
-            //     set_state(AS_REPORT, TX2, MAX_TX_RETRY);
-            //     return true;
-
-            // Since we sent TX2, it doesn't make sense to respond to TX2
-            // case TX2:
-            //     set_state(AS_ROGER_REPORT, TX3, MAX_TX_RETRY);
-            //     return true;
-
         case TX3:
             set_state(AS_ROGERS, TX4, MAX_TX_RETRY);
             return true;
@@ -529,21 +509,6 @@ static bool generate_response(const Decode *msg, bool override)
     case AS_ROGER_REPORT:
         switch (ctx.rcvd_msg_type)
         {
-        // Since we sent TX1, it doesn't make sense to respond to TX1
-        // case TX1:
-        //     set_state(AS_REPORT, TX2, MAX_TX_RETRY);
-        //     return true;
-
-        // DX didn't copy our TX3 response, stay in the same state by returning false
-        // case TX2:
-        //     set_state(AS_ROGER_REPORT, TX3, MAX_TX_RETRY);
-        //     return true;
-
-        // Since we sent TX3, it doesn't make sense to respond to TX3
-        // case TX3:
-        //     set_state(AS_SIGNOFF, TX4, MAX_TX_RETRY);
-        //     return true;
-
         // QSO complete
         case TX4:
         case TX5: // Be polite, echo back 73
@@ -587,13 +552,9 @@ static bool generate_response(const Decode *msg, bool override)
 
 static void write_worked_qso()
 {
-    static const char band_strs[][4] = {
+    static const char band_strs[NumBands][4] = {
         "40", "30", "20", "17", "15", "12", "10"};
     char *buf = add_worked_qso();
-    // band, HH:MM, callsign, SNR
-    // int printed = snprintf(buf, MAX_LINE_LEN, "%.4s %.3s %.12s",
-    //     log_rtc_time_string,
-
     int printed = snprintf(buf, MAX_LINE_LEN, "%.3s %.12s",
                            band_strs[BandIndex],
                            ctx.dxcall);

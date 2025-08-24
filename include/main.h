@@ -32,6 +32,8 @@ extern int ft8_xmit_counter;
 extern int slot_state;
 extern int target_slot;
 extern bool free_text;
+extern bool tx_pressed;
+extern bool clr_pressed;
 
 extern q15_t __attribute__((aligned(4))) dsp_buffer[];
 extern q15_t __attribute__((aligned(4))) dsp_output[];
