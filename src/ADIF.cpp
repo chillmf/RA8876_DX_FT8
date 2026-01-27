@@ -293,11 +293,12 @@ static unsigned num_chars(const char *ptr)
 void write_ADIF_Log()
 {
   static char log_line[300];
+  char freq[10];
 
   make_time();
   make_date();
 
-  const char *freq = sBand_Data[BandIndex].display;
+  sprintf(freq, "%u.%.3u", sBand_Data[BandIndex].Frequency / 1000, sBand_Data[BandIndex].Frequency % 1000);
 
   int offset = sprintf(log_line, "<call:%1u>%s ", num_chars(Target_Call), trim_front(Target_Call));
   int target_locator_len = num_chars(Target_Locator);
